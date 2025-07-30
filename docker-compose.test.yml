@@ -1,0 +1,39 @@
+# Test configuration for Docker Compose
+# Use this for testing the setup without full services
+version: "3.8"
+
+services:
+  # PostgreSQL database for testing
+  postgres-test:
+    image: postgres:15-alpine
+    container_name: nexus-bridge-postgres-test
+    environment:
+      POSTGRES_DB: nexus_bridge_test
+      POSTGRES_USER: nexus
+      POSTGRES_PASSWORD: nexus_password
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nexus -d nexus_bridge_test"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+
+  # Hardhat test node
+  hardhat-test:
+    build:
+      context: ./docker/hardhat
+      dockerfile: Dockerfile
+    container_name: nexus-bridge-hardhat-test
+    ports:
+      - "8547:8545"
+    volumes:
+      - ./contracts:/app/contracts
+    command: npx hardhat node --hostname 0.0.0.0 --port 8545
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8545"]
+      interval: 5s
+      timeout: 3s
+      retries: 3

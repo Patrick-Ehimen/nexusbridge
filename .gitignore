@@ -23,3 +23,37 @@ go.work.sum
 
 # env file
 .env
+
+# Build artifacts
+bin/
+dist/
+
+# Contract artifacts
+contracts/artifacts/
+contracts/cache/
+contracts/node_modules/
+contracts/typechain-types/
+
+# Database
+*.db
+*.sqlite
+
+# Logs
+*.log
+logs/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker volumes
+postgres_data/
+redis_data/
+prometheus_data/
+grafana_data/
+
+.kiro/

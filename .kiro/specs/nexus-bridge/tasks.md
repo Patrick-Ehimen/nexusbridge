@@ -1,6 +1,6 @@
 # Implementation Plan
 
-- [ ] 1. Set up project structure and development environment
+- [x] 1. Set up project structure and development environment
 
   - Initialize Go module with proper directory structure for contracts, relayer, and API services
   - Configure Hardhat for smart contract development
@@ -16,22 +16,22 @@
   - Write unit tests for data model validation and serialization/deserialization
   - _Requirements: 1.1, 2.1, 3.1, 4.1, 5.1, 6.1, 7.1, 8.1_
 
-- [ ] 3. Develop Ethereum bridge smart contract using Foundry
+- [ ] 3. Develop Ethereum bridge smart contract using Hardhat
 
   - Implement EthereumBridge contract with lockTokens and unlockTokens functions
   - Add multi-signature validation logic for unlock operations using ECDSA signature recovery
   - Implement access control with OpenZeppelin's AccessControl for relayer management
   - Add reentrancy protection and pausable functionality for emergency stops
-  - Write comprehensive Foundry tests covering all functions and security scenarios
+  - Write comprehensive Hardhat tests using Mocha/Chai covering all functions and security scenarios
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 2.4, 4.1, 4.2, 4.3, 7.1, 7.3_
 
-- [ ] 4. Develop Polygon bridge smart contract using Foundry
+- [ ] 4. Develop Polygon bridge smart contract using Hardhat
 
   - Implement PolygonBridge contract with mintTokens and burnTokens functions
   - Create wrapped token factory for deploying ERC-20 representations of locked tokens
   - Add multi-signature validation for minting operations with proper signature verification
   - Implement token registry for managing supported tokens and their metadata
-  - Write Foundry tests for minting, burning, and wrapped token deployment scenarios
+  - Write Hardhat tests using Mocha/Chai for minting, burning, and wrapped token deployment scenarios
   - _Requirements: 1.3, 1.4, 2.1, 2.2, 2.3, 4.1, 4.2, 7.1, 7.3_
 
 - [ ] 5. Implement Cosmos bridge module using Cosmos SDK
@@ -144,7 +144,7 @@
 
 - [ ] 17. Implement security testing and validation
 
-  - Add smart contract security tests using Foundry's fuzzing capabilities
+  - Add smart contract security tests using Hardhat with property-based testing libraries
   - Implement signature validation edge case testing with malformed signatures
   - Add penetration testing for API endpoints with various attack vectors
   - Implement key rotation testing and emergency stop procedures
