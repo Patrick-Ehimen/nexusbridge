@@ -1,0 +1,62 @@
+# Cosmos Bridge Configuration (Future Implementation)
+# This configuration will be used when Cosmos SDK integration is implemented
+
+cosmos:
+  # Chain configuration
+  chain_id: "cosmoshub-4"
+  rpc_endpoint: "https://rpc.cosmos.network:443"
+  grpc_endpoint: "https://grpc.cosmos.network:9090"
+
+  # Bridge module configuration
+  module:
+    name: "bridge"
+    version: "v1.0.0"
+
+  # IBC configuration
+  ibc:
+    port_id: "bridge"
+    version: "bridge-1"
+    timeout_height: 1000
+    timeout_timestamp: 3600000000000 # 1 hour in nanoseconds
+
+  # Token registry
+  supported_tokens:
+    - denom: "uatom"
+      name: "Cosmos Hub Atom"
+      symbol: "ATOM"
+      decimals: 6
+      origin_chain: 118
+      is_native: true
+      min_transfer: "1000"
+      max_transfer: "1000000000000"
+
+  # Validator set configuration
+  validators:
+    threshold: 2
+    relayers:
+      - address: "cosmos1relayer1..."
+        pub_key: "cosmospub1..."
+        stake: "10000000000"
+      - address: "cosmos1relayer2..."
+        pub_key: "cosmospub2..."
+        stake: "10000000000"
+
+  # Bridge parameters
+  params:
+    min_transfer_amount: "1"
+    max_transfer_amount: "1000000000000"
+    transfer_fee_percent: 10 # 0.1%
+    relayer_stake_required: "10000000000"
+    signature_threshold: 2
+    transfer_timeout: "24h"
+
+  # Gas configuration
+  gas:
+    prices: "0.025uatom"
+    adjustment: 1.5
+
+  # Security settings
+  security:
+    enable_emergency_pause: true
+    max_daily_volume: "100000000000000"
+    rate_limit_per_address: "10000000000"
