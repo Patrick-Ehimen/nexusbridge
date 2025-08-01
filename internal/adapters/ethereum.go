@@ -12,7 +12,7 @@ import (
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/types"
+	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/rpc"
@@ -161,7 +161,7 @@ func (e *EthereumAdapter) SubmitTransaction(ctx context.Context, tx types.Transa
 		value = tx.Value.Int
 	}
 
-	ethTx := types.NewTransaction(
+	ethTx := ethtypes.NewTransaction(
 		nonce,
 		common.HexToAddress(tx.To),
 		value,
@@ -172,7 +172,7 @@ func (e *EthereumAdapter) SubmitTransaction(ctx context.Context, tx types.Transa
 
 	// Sign transaction
 	chainID := big.NewInt(int64(e.config.ChainID))
-	signedTx, err := types.SignTx(ethTx, types.NewEIP155Signer(chainID), e.privateKey)
+	signedTx, err := ethtypes.SignTx(ethTx, ethtypes.NewEIP155Signer(chainID), e.privateKey)
 	if err != nil {
 		return nil, fmt.Errorf("failed to sign transaction: %w", err)
 	}
@@ -446,7 +446,7 @@ func (e *EthereumAdapter) detectReorganization(ctx context.Context, lastBlock ui
 }
 
 // parseLogToEvent parses an Ethereum log to a bridge event
-func (e *EthereumAdapter) parseLogToEvent(log types.Log, eventType string) (*types.Event, error) {
+func (e *EthereumAdapter) parseLogToEvent(log ethtypes.Log, eventType string) (*types.Event, error) {
 	switch eventType {
 	case "TokensLocked":
 		return e.parseTokensLockedEvent(log)
@@ -458,7 +458,7 @@ func (e *EthereumAdapter) parseLogToEvent(log types.Log, eventType string) (*typ
 }
 
 // parseTokensLockedEvent parses a TokensLocked event
-func (e *EthereumAdapter) parseTokensLockedEvent(log types.Log) (*types.Event, error) {
+func (e *EthereumAdapter) parseTokensLockedEvent(log ethtypes.Log) (*types.Event, error) {
 	// Parse the event using ABI
 	event := struct {
 		TransferID       [32]byte
@@ -511,7 +511,7 @@ func (e *EthereumAdapter) parseTokensLockedEvent(log types.Log) (*types.Event, e
 }
 
 // parseTokensUnlockedEvent parses a TokensUnlocked event
-func (e *EthereumAdapter) parseTokensUnlockedEvent(log types.Log) (*types.Event, error) {
+func (e *EthereumAdapter) parseTokensUnlockedEvent(log ethtypes.Log) (*types.Event, error) {
 	// Parse the event using ABI
 	event := struct {
 		TransferID [32]byte
@@ -559,7 +559,7 @@ func (e *EthereumAdapter) parseTokensUnlockedEvent(log types.Log) (*types.Event,
 }
 
 // validateEventLog validates that a log matches the expected event
-func (e *EthereumAdapter) validateEventLog(log *types.Log, event types.Event) bool {
+func (e *EthereumAdapter) validateEventLog(log *ethtypes.Log, event types.Event) bool {
 	// Basic validation - check if transaction hash matches
 	return log.TxHash.Hex() == event.TxHash
 }
