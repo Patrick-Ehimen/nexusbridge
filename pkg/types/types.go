@@ -211,6 +211,11 @@ func NewBigInt(i *big.Int) *BigInt {
 	return &BigInt{new(big.Int).Set(i)}
 }
 
+// NewBigIntFromInt64 creates a new BigInt from int64
+func NewBigIntFromInt64(i int64) *big.Int {
+	return big.NewInt(i)
+}
+
 // MarshalJSON implements json.Marshaler
 func (b *BigInt) MarshalJSON() ([]byte, error) {
 	if b.Int == nil {
