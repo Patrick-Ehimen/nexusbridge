@@ -9,7 +9,7 @@ import (
 
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/types"
+	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -33,22 +33,22 @@ func (m *MockEthereumClient) BlockNumber(ctx context.Context) (uint64, error) {
 	return args.Get(0).(uint64), args.Error(1)
 }
 
-func (m *MockEthereumClient) BlockByNumber(ctx context.Context, number *big.Int) (*types.Block, error) {
+func (m *MockEthereumClient) BlockByNumber(ctx context.Context, number *big.Int) (*ethtypes.Block, error) {
 	args := m.Called(ctx, number)
-	return args.Get(0).(*types.Block), args.Error(1)
+	return args.Get(0).(*ethtypes.Block), args.Error(1)
 }
 
-func (m *MockEthereumClient) TransactionReceipt(ctx context.Context, txHash common.Hash) (*types.Receipt, error) {
+func (m *MockEthereumClient) TransactionReceipt(ctx context.Context, txHash common.Hash) (*ethtypes.Receipt, error) {
 	args := m.Called(ctx, txHash)
-	return args.Get(0).(*types.Receipt), args.Error(1)
+	return args.Get(0).(*ethtypes.Receipt), args.Error(1)
 }
 
-func (m *MockEthereumClient) FilterLogs(ctx context.Context, q ethereum.FilterQuery) ([]types.Log, error) {
+func (m *MockEthereumClient) FilterLogs(ctx context.Context, q ethereum.FilterQuery) ([]ethtypes.Log, error) {
 	args := m.Called(ctx, q)
-	return args.Get(0).([]types.Log), args.Error(1)
+	return args.Get(0).([]ethtypes.Log), args.Error(1)
 }
 
-func (m *MockEthereumClient) SendTransaction(ctx context.Context, tx *types.Transaction) error {
+func (m *MockEthereumClient) SendTransaction(ctx context.Context, tx *ethtypes.Transaction) error {
 	args := m.Called(ctx, tx)
 	return args.Error(0)
 }
@@ -292,7 +292,7 @@ func TestEthereumAdapter_ParseTokensLockedEvent(t *testing.T) {
 	transferID := common.HexToHash("0x1234567890123456789012345678901234567890123456789012345678901234")
 	user := common.HexToAddress("0x742d35Cc6634C0532925a3b8D4C9db96C4C6C6C6")
 	
-	log := types.Log{
+	log := ethtypes.Log{
 		Address: common.HexToAddress(adapter.config.BridgeContract),
 		Topics: []common.Hash{
 			crypto.Keccak256Hash([]byte("TokensLocked(bytes32,address,address,uint256,uint256,address)")),
@@ -306,7 +306,7 @@ func TestEthereumAdapter_ParseTokensLockedEvent(t *testing.T) {
 	}
 
 	// Test parsing (this would work with proper ABI data)
-	event, err := adapter.parseLogToEvent(log, "TokensLocked")
+	_, err = adapter.parseLogToEvent(log, "TokensLocked")
 	
 	// Since we don't have proper ABI data, we expect an error
 	// In a real implementation, this would parse successfully
@@ -349,9 +349,9 @@ func TestEthereumAdapter_DetectReorganization(t *testing.T) {
 
 func TestEthereumAdapter_EstimateGas(t *testing.T) {
 	privateKey := createTestPrivateKey()
-	adapter := NewEthereumAdapter(privateKey)
+	_ = NewEthereumAdapter(privateKey)
 
-	tx := bridgeTypes.Transaction{
+	_ = bridgeTypes.Transaction{
 		To:       "0x1234567890123456789012345678901234567890",
 		Data:     []byte("test data"),
 		Value:    bridgeTypes.NewBigInt(big.NewInt(1000000000000000000)),
@@ -467,7 +467,7 @@ func BenchmarkEthereumAdapter_ParseTokensLockedEvent(b *testing.B) {
 	bridgeABI, _ := adapter.loadBridgeABI()
 	adapter.bridgeABI = bridgeABI
 
-	log := types.Log{
+	log := ethtypes.Log{
 		Address: common.HexToAddress(adapter.config.BridgeContract),
 		Topics: []common.Hash{
 			crypto.Keccak256Hash([]byte("TokensLocked(bytes32,address,address,uint256,uint256,address)")),
@@ -490,7 +490,7 @@ func BenchmarkEthereumAdapter_ValidateEventLog(b *testing.B) {
 	privateKey := createTestPrivateKey()
 	adapter := NewEthereumAdapter(privateKey)
 
-	log := &types.Log{
+	log := &ethtypes.Log{
 		TxHash: common.HexToHash("0x1234567890123456789012345678901234567890123456789012345678901234"),
 	}
 
